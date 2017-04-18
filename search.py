@@ -12,6 +12,23 @@ by Pacman agents (in searchAgents.py).
 """
 
 import util
+from util import(Stack)
+
+class Node:
+    def __init__(self, cell, direction = None, cost = 0, parent = None):
+        self.cell = cell
+        self.direction = direction
+        self.cost = cost
+        self.parent = parent
+
+    def path(self):
+        node = self
+        path_to_parent = []
+        while node.parent:
+            path_to_parent.append(node.direction)
+            node = node.parent
+        return list(reversed(path_to_parent))
+
 
 class SearchProblem:
   """
@@ -79,12 +96,33 @@ def depthFirstSearch(problem):
   To get started, you might want to try some of these simple commands to
   understand the search problem that is being passed in:
   
+  """
   print "Start:", problem.getStartState()
   print "Is the start a goal?", problem.isGoalState(problem.getStartState())
   print "Start's successors:", problem.getSuccessors(problem.getStartState())
-  """
-  "*** YOUR CODE HERE ***"
-  util.raiseNotDefined()
+  return graph_search(problem)
+
+def graph_search(problem):
+    frontier = Stack()
+    explored = set()
+    frontier.push(Node(problem.getStartState()))
+
+    while frontier:
+        current_node = frontier.pop()
+        explored.add(current_node.cell)
+        if problem.isGoalState(current_node.cell):
+            my_path = current_node.path()
+            print "GOAL"
+            print my_path
+            return my_path
+        successors = problem.getSuccessors(current_node.cell)
+
+        for cell, direction, cost in successors:
+            if(cell not in explored):
+                explored.add(cell)
+                child_node = Node(cell, direction, cost, current_node)
+                frontier.push(child_node)
+    return None
 
 def breadthFirstSearch(problem):
   """
