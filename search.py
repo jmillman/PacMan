@@ -111,7 +111,11 @@ def breadthFirstSearch(problem):
 def uniformCostSearch(problem):
   "Search the node of least total cost first. "
   "*** YOUR CODE HERE ***"
-  util.raiseNotDefined()
+
+
+  # game_queue.push((problem.getStartState(), []), problem.ManhattanHeuristic(problem.getStartState(), problem))
+
+  return graph_search_with_cost(problem, util.PriorityQueue())
 
 def nullHeuristic(state, problem=None):
   """
@@ -145,6 +149,27 @@ def graph_search(problem, frontier):
                 child_node = Node(cell, direction, cost, current_node)
                 frontier.push(child_node)
     return None
+
+def graph_search_with_cost(problem, frontier):
+    explored = set()
+    frontier.push(Node(problem.getStartState()), 0)
+
+    while frontier:
+        current_node = frontier.pop()
+        explored.add(current_node.cell)
+        if problem.isGoalState(current_node.cell):
+            my_path = current_node.path()
+            print "GOAL"
+            print my_path
+            return my_path
+        successors = problem.getSuccessors(current_node.cell)
+        for cell, direction, cost in successors:
+            if(cell not in explored):
+                explored.add(cell)
+                child_node = Node(cell, direction, cost, current_node)
+                frontier.push(child_node, problem.getCostOfActions(child_node.path()))
+    return None
+
 
 # Abbreviations
 bfs = breadthFirstSearch
